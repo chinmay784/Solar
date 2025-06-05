@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 exports.dbConnect = async () => {
 
-    mongoose.connect("mongodb://localhost:27017/solar").then(() => {
+    mongoose.connect("mongodb+srv://chinmaypuhan420:7QP8Ok8HTHoELT8N@solarcluster.lifqqud.mongodb.net/SolarDivya").then(() => {
         console.log("MongoDB Connected");
     })
         .catch((err) => {
