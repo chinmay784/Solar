@@ -36,7 +36,7 @@ exports.sendResponse = async (req, res) => {
         });
         let images = result.secure_url
         // imageUrls.push(result.secure_url);
-
+        console.log("Before Save")
         await Message.create({
             name,
             email,
@@ -44,7 +44,7 @@ exports.sendResponse = async (req, res) => {
             message,
             billFile:images
         });
-
+         console.log("After Save")
         return res.status(200).json({
             success: true,
             message: "Message sent successfully",
