@@ -2,6 +2,7 @@ const nodeMailer = require("nodemailer");
 const dotenv = require("dotenv");
 dotenv.config();
 const Message = require("../models/messageModel")
+const cloudinary = require("cloudinary")
 
 const transPorter = nodeMailer.createTransport({
     service: "gmail",
@@ -14,9 +15,9 @@ const transPorter = nodeMailer.createTransport({
 exports.sendResponse = async (req, res) => {
     console.log("Hello")
     try {
-        const { name, email, phoneNo, message } = req.body;
+        const { name, email, phoneNo, message , billFile } = req.body;
 
-        if (!name || !email || !phoneNo || !message) {
+        if (!name || !email || !phoneNo || !message || !billFile) {
             return res.status(200).json({
                 success: false,
                 message: "All fields are required",
@@ -30,11 +31,18 @@ exports.sendResponse = async (req, res) => {
             text: `Name: ${name}\nEmail: ${email}\nPhone No: ${phoneNo}\nMessage: ${message}`,
         })
 
+        const result = await cloudinary.uploader.upload(file.path, {
+            folder: "profile_pics",
+        });
+        let image = result.secure_url
+        // imageUrls.push(result.secure_url);
+
         await Message.create({
             name,
             email,
             phoneNo,
             message,
+            billFile:image
         });
 
         return res.status(200).json({
