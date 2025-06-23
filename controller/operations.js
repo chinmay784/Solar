@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 const Message = require("../models/messageModel")
 const cloudinary = require("cloudinary")
+const Career = require("../models/CerrerModel")
 
 const transPorter = nodeMailer.createTransport({
     service: "gmail",
@@ -65,3 +66,60 @@ exports.sendResponse = async (req, res) => {
         });
     }
 };
+
+
+
+
+exports.CareerApi = async (req, res) => {
+    try {
+        const { FirstName, LastName, email, Phone, Position, message, PortfolioLink } = req.body;
+        const image = req.file;
+
+        if (!FirstName || !LastName || !email || !Phone || !Position || !message || !PortfolioLink) {
+            return res.status(200).json({
+                success: false,
+                message: "Please Provide add Fields"
+            })
+        }
+
+        // await transPorter.sendMail({
+        //     from: process.env.SMTP_USER,
+        //     to: email,
+        //     subject: "New Contact Form Submission",
+        //     text: `Name: ${name}\nEmail: ${email}\nPhone No: ${phoneNo}\nMessage: ${message}`,
+        // });
+
+        // Upload image to Cloudinary
+        const result = await cloudinary.uploader.upload(image.path, {
+            folder: "profile_pics",
+        });
+
+        console.log("Before Save");
+
+        // Save to DB
+        await Career.create({
+            FirstName,
+            LastName,
+            email,
+            Phone,
+            Position,
+            message,
+            PortfolioLink,
+            CV:result.secure_url,
+        });
+
+        console.log("After Save");
+
+        return res.status(200).json({
+            success: true,
+            message: " SubMited Career successfully",
+        });
+
+    } catch (error) {
+        console.log(error, error.message);
+        return res.status(500).json({
+            success: false,
+            message: "Server Error in sending Career "
+        })
+    }
+}
