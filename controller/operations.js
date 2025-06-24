@@ -38,6 +38,7 @@ exports.sendResponse = async (req, res) => {
         // Upload image to Cloudinary
         const result = await cloudinary.uploader.upload(image.path, {
             folder: "profile_pics",
+            resource_type: 'auto'
         });
 
         console.log("Before Save");
@@ -92,6 +93,7 @@ exports.CareerApi = async (req, res) => {
         // Upload image to Cloudinary
         const result = await cloudinary.uploader.upload(image.path, {
             folder: "profile_pics",
+            resource_type: 'auto'
         });
 
         console.log("Before Save");
@@ -105,7 +107,7 @@ exports.CareerApi = async (req, res) => {
             Position,
             message,
             PortfolioLink,
-            CV:result.secure_url,
+            CV: result.secure_url,
         });
 
         console.log("After Save");
