@@ -14,10 +14,9 @@ const storage = new CloudinaryStorage({
     cloudinary,
     params: {
         folder: 'profile_pics',
-        allowed_formats: ['jpg', 'png', 'jpeg'],
+        allowed_formats: ['jpg', 'png', 'jpeg', 'pdf'], // ✅ Include 'pdf'
     },
 });
-
 
 const upload = multer({ storage });
 
