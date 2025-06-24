@@ -1,7 +1,7 @@
 const cloudinary = require('cloudinary').v2;
-const dotenv = require('dotenv');   
+const dotenv = require('dotenv');
 dotenv.config();
-const {CloudinaryStorage} = require('multer-storage-cloudinary');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require("multer");
 
 cloudinary.config({
@@ -15,6 +15,7 @@ const storage = new CloudinaryStorage({
     params: {
         folder: 'profile_pics',
         allowed_formats: ['jpg', 'png', 'jpeg', 'pdf'], // ✅ Include 'pdf'
+        resource_type: 'auto',
     },
 });
 
