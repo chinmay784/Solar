@@ -73,10 +73,10 @@ exports.sendResponse = async (req, res) => {
 
 exports.CareerApi = async (req, res) => {
     try {
-        const { FirstName, LastName, email, Phone, Position, message, PortfolioLink } = req.body;
+        const { FirstName, LastName, email, Phone, Position, message } = req.body;
         const image = req.file;
 
-        if (!FirstName || !LastName || !email || !Phone || !Position || !message || !PortfolioLink) {
+        if (!FirstName || !LastName || !email || !Phone || !Position || !message ) {
             return res.status(200).json({
                 success: false,
                 message: "Please Provide add Fields"
@@ -96,7 +96,7 @@ exports.CareerApi = async (req, res) => {
             from: process.env.SMTP_USER,
             to: email,
             subject: "One Career Submission",
-            text: `FirstName: ${FirstName}\nEmail: ${email}\nPhone No: ${Phone}\nMessage: ${message}\nPortfolioLink :${PortfolioLink}\nPosition :${Position}\n CV :${result.secure_url}`,
+            text: `FirstName: ${FirstName}\nEmail: ${email}\nPhone No: ${Phone}\nMessage: ${message}\nPosition :${Position}\n CV :${result.secure_url}`,
         });
 
         // Save to DB
@@ -107,7 +107,6 @@ exports.CareerApi = async (req, res) => {
             Phone,
             Position,
             message,
-            PortfolioLink,
             CV: result.secure_url,
         });
 

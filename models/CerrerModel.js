@@ -28,10 +28,10 @@ const CareerSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    PortfolioLink: {
-        type: String,
-        required: true,
-    },
+    // PortfolioLink: {
+    //     type: String,
+    //     required: true,
+    // },
     CV:{
         type: String,
         required: true
