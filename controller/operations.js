@@ -27,21 +27,21 @@ exports.sendResponse = async (req, res) => {
             });
         }
 
+        // Upload image to Cloudinary
+        const result = await cloudinary.v2.uploader.upload(image.path, {
+            folder: "profile_pics",
+            resource_type: "raw", // ✅ force raw
+        });
+
+        console.log("Before Save");
+
         // Send mail
         await transPorter.sendMail({
             from: process.env.SMTP_USER,
             to: email,
             subject: "New Contact Form Submission",
-            text: `Name: ${name}\nEmail: ${email}\nPhone No: ${phoneNo}\nMessage: ${message}`,
+            text: `Name: ${name}\nEmail: ${email}\nPhone No: ${phoneNo}\nMessage: ${message}\nbillFile:${result.secure_url}`,
         });
-
-        // Upload image to Cloudinary
-        const result = await cloudinary.uploader.upload(image.path, {
-            folder: "profile_pics",
-            resource_type: 'auto'
-        });
-
-        console.log("Before Save");
 
         // Save to DB
         await Message.create({
@@ -83,20 +83,21 @@ exports.CareerApi = async (req, res) => {
             })
         }
 
-        // await transPorter.sendMail({
-        //     from: process.env.SMTP_USER,
-        //     to: email,
-        //     subject: "New Contact Form Submission",
-        //     text: `Name: ${name}\nEmail: ${email}\nPhone No: ${phoneNo}\nMessage: ${message}`,
-        // });
-
-        // Upload image to Cloudinary
-        const result = await cloudinary.uploader.upload(image.path, {
+        const result = await cloudinary.v2.uploader.upload(image.path, {
             folder: "profile_pics",
-            resource_type: 'auto'
+            resource_type: "raw", // ✅ force raw
         });
 
+        // console.log(result.secure_url)
         console.log("Before Save");
+
+
+        await transPorter.sendMail({
+            from: process.env.SMTP_USER,
+            to: email,
+            subject: "One Career Submission",
+            text: `FirstName: ${FirstName}\nEmail: ${email}\nPhone No: ${Phone}\nMessage: ${message}\nPortfolioLink :${PortfolioLink}\nPosition :${Position}\n CV :${result.secure_url}`,
+        });
 
         // Save to DB
         await Career.create({
