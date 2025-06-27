@@ -76,7 +76,7 @@ exports.CareerApi = async (req, res) => {
         const { FirstName, LastName, email, Phone, Position, message } = req.body;
         const image = req.file;
 
-        if (!FirstName || !LastName || !email || !Phone || !Position || !message ) {
+        if (!FirstName || !LastName || !email || !Phone || !Position || !message) {
             return res.status(200).json({
                 success: false,
                 message: "Please Provide add Fields"
@@ -122,6 +122,31 @@ exports.CareerApi = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "Server Error in sending Career "
+        })
+    }
+}
+
+
+exports.contact = async (req, res) => {
+    try {
+        const { name, email, phoneNo, message } = req.body
+
+        await Message.create({
+            name,
+            email,
+            phoneNo,
+            message,
+        });
+
+        return res.status(200).json({
+            success:true,
+            message:"SubMited sucessFully"
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            success: false,
+            message: "Server Error in Contact"
         })
     }
 }
