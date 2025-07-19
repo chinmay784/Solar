@@ -1,65 +1,86 @@
+const dotenv = require("dotenv");
+dotenv.config();
 const express = require('express');
 const { sendResponse, CareerApi, contact } = require('../controller/operations');
 const router = express.Router();
-const {upload} = require("../config/cloudinary")
-const {toWords} = require("number-to-words");
+const { upload } = require("../config/cloudinary")
+const { toWords } = require("number-to-words");
+const nodeMailer = require('nodemailer');
 
-router.post("/senddata",upload.single("billFile"),sendResponse);
-router.post("/CareerApi",upload.single("CV"),CareerApi)
-router.post("/contact",contact)
+const transPorter = nodeMailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: "ondkopuwcqizcqqu"
+  },
+});
+
+router.post("/senddata", upload.single("billFile"), sendResponse);
+router.post("/CareerApi", upload.single("CV"), CareerApi)
+router.post("/contact", contact)
 
 
-function calculateOutputs(estimatedKW, electricityBill, peakSunHours, continuousLoadKW) {
-  const unitsPerDay = estimatedKW * peakSunHours;
-  const monthlyUnits = unitsPerDay * 30;
-  const avgRate = electricityBill / monthlyUnits;
-  const monthlySaving = avgRate * monthlyUnits;
-  const yearlySaving = monthlySaving * 12;
-  const savings25YearsValue = Math.round(yearlySaving * 25);
-
-  const degradationFactor = 0.9375;
-  const weatherFactor = 0.90;
-  const finalEfficiency = degradationFactor * weatherFactor;
-
-  const adjustedMonthlyGeneration = Math.round(estimatedKW * peakSunHours * 30 * finalEfficiency);
-  const totalPowerSaved = adjustedMonthlyGeneration * 12 * 25;
-
-  const co2Saved = Math.round(monthlyUnits * 0.92 * 12 * 25 / 1000); // in tons
-  const treesSaved = Math.round(co2Saved * 0.8);
-  const waterSaved = Math.round(monthlyUnits * 2 * 12 * 25); // in liters
-
-  return {
-    savings25Years: `₹${savings25YearsValue}`,
-    savingsInWords: `${toWords(savings25YearsValue)} Rupees`,
-    co2Saved: `${co2Saved} tons`,
-    treesSaved: `${treesSaved} trees`,
-    waterSaved: `${waterSaved} liters`,
-    adjustedMonthlyGeneration: `${adjustedMonthlyGeneration} kWh/month`,
-    totalPowerSaved: `${totalPowerSaved} kWh over 25 years`
-  };
-}
 
 router.post('/submit', async (req, res) => {
   try {
-    const {
-      electricityBill,
-      roofArea,
-      state,
-      district,
-      peakSunHours,
-      roofType,
-      phoneNumber,
-      meterKW,
-      meterConnection,
-      continuousLoadKW
-    } = req.body;
+    const { bill } = req.body;
+    const savings_per_kw = 1191;
+    const cost_per_kw = 85185;
+    const central_subsidy_per_kw = 26888;
+    const state_subsidy_fixed = 30000;
+    const roof_area_per_kw = 60;
 
-    const estimatedKW = Math.round((roofArea / 100) * 100) / 100;
-    const results = calculateOutputs(estimatedKW, electricityBill, peakSunHours, continuousLoadKW);
-    res.status(201).json({ message: 'Data saved successfully', results });
+    const system_size = +(bill / savings_per_kw).toFixed(2);
+    const roof_area = Math.round(system_size * roof_area_per_kw);
+    const total_cost = Math.round(system_size * cost_per_kw);
+    const central_subsidy = Math.round(system_size * central_subsidy_per_kw);
+    const net_cost = total_cost - central_subsidy - state_subsidy_fixed;
+    const monthly_saving = Math.round(system_size * savings_per_kw);
+    const lifetime_saving = 964892;
+    const roi = +((lifetime_saving / net_cost) / 25 * 100).toFixed(2);
+
+    // const calculation = new Calculation({
+    //   bill, system_size, roof_area, total_cost, net_cost, monthly_saving, roi
+    // });
+    // await calculation.save();
+
+    res.json({ system_size, roof_area, total_cost, net_cost, monthly_saving, roi });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to save entry', details: error.message });
+    console.log(error.message)
+    res.status(500).json({ error: 'Failed to Calculate Cost', details: error.message });
   }
 });
+
+
+router.post("/subScribe", async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required"
+      });
+    }
+
+    // Send mail
+    await transPorter.sendMail({
+      from: process.env.SMTP_USER,
+      to: email,
+      subject: 'Subscription Confirmation',
+      text: 'Thank you for subscribing to SolarHayFynix updates!'
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Subscribed successfully",
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({
+      sucess: false,
+      message: "Subscribe Error"
+    })
+  }
+})
 
 module.exports = router;
