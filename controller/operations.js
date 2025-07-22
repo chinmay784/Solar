@@ -9,7 +9,7 @@ const transPorter = nodeMailer.createTransport({
     service: "gmail",
     auth: {
         user: process.env.SMTP_USER,
-        pass: "ondkopuwcqizcqqu"
+        pass: "obzscaerwcxbgjhf"
     },
 });
 
@@ -38,9 +38,18 @@ exports.sendResponse = async (req, res) => {
         // Send mail
         await transPorter.sendMail({
             from: process.env.SMTP_USER,
-            to: email,
-            subject: "New Contact Form Submission",
+            to: process.env.SMTP_USER, // your admin email
+            subject: "Electricity Bill Submission Form ",
             text: `Name: ${name}\nEmail: ${email}\nPhone No: ${phoneNo}\nMessage: ${message}\nbillFile:${result.secure_url}`,
+        });
+
+
+        // ✅ Send acknowledgment email to the user
+        await transPorter.sendMail({
+            from: process.env.SMTP_USER,
+            to: email,
+            subject: "Thank you for contacting us!",
+            text: `Thank you for contacting Divy Power. Our Team will Get back to you soon`,
         });
 
         // Save to DB
@@ -94,9 +103,18 @@ exports.CareerApi = async (req, res) => {
 
         await transPorter.sendMail({
             from: process.env.SMTP_USER,
-            to: email,
-            subject: "One Career Submission",
+            to: process.env.SMTP_USER,
+            subject: " Career Form Submission",
             text: `FirstName: ${FirstName}\nEmail: ${email}\nPhone No: ${Phone}\nMessage: ${message}\nPosition :${Position}\n CV :${result.secure_url}`,
+        });
+
+
+        // ✅ Send acknowledgment email to the user
+        await transPorter.sendMail({
+            from: process.env.SMTP_USER,
+            to: email,
+            subject: "Thank you for contacting us!",
+            text: `Thank you for contacting Divy Power. Our Team will Get back to you soon`,
         });
 
         // Save to DB
@@ -138,9 +156,25 @@ exports.contact = async (req, res) => {
             message,
         });
 
+        await transPorter.sendMail({
+            from: process.env.SMTP_USER,
+            to: process.env.SMTP_USER,
+            subject: " Contact Us Form Submission",
+            text: `Name: ${name}\nEmail: ${email}\nPhone No: ${phoneNo}\nMessage: ${message}}`,
+        });
+
+
+        // ✅ Send acknowledgment email to the user
+        await transPorter.sendMail({
+            from: process.env.SMTP_USER,
+            to: email,
+            subject: "Thank you for contacting us!",
+            text: `Thank you for contacting Divy Power. Our Team will Get back to you soon`,
+        });
+
         return res.status(200).json({
-            success:true,
-            message:"SubMited sucessFully"
+            success: true,
+            message: "SubMited sucessFully"
         })
     } catch (error) {
         console.log(error)

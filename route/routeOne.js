@@ -11,7 +11,7 @@ const transPorter = nodeMailer.createTransport({
   service: "gmail",
   auth: {
     user: process.env.SMTP_USER,
-    pass: "ondkopuwcqizcqqu"
+    pass: "obzscaerwcxbgjhf"
   },
 });
 
@@ -62,12 +62,20 @@ router.post("/subScribe", async (req, res) => {
       });
     }
 
+
+    await transPorter.sendMail({
+      from: process.env.SMTP_USER,
+      to: process.env.SMTP_USER,
+      subject: " Newsletter/Blogs Form Submission",
+      text: `Email: ${email}`,
+    });
+
     // Send mail
     await transPorter.sendMail({
       from: process.env.SMTP_USER,
       to: email,
-      subject: 'Subscription Confirmation',
-      text: 'Thank you for subscribing to SolarHayFynix updates!'
+      subject: "Thank you for contacting us!",
+      text: `Thank you for subscribing to our Newsletter`,
     });
 
     return res.status(200).json({
