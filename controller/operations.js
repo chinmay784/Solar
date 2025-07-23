@@ -8,7 +8,7 @@ const Career = require("../models/CerrerModel")
 const transPorter = nodeMailer.createTransport({
     service: "gmail",
     auth: {
-        user: process.env.SMTP_USER,
+        user: "sales@divypower.com",
         pass: process.env.SMTP_PASS
     },
 });
@@ -37,8 +37,8 @@ exports.sendResponse = async (req, res) => {
 
         // Send mail
         await transPorter.sendMail({
-            from: process.env.SMTP_USER,
-            to: process.env.SMTP_USER, // your admin email
+            from: "sales@divypower.com",
+            to: "sales@divypower.com", // your admin email
             subject: "Electricity Bill Submission Form ",
             text: `Name: ${name}\nEmail: ${email}\nPhone No: ${phoneNo}\nMessage: ${message}\nbillFile:${result.secure_url}`,
         });
@@ -46,7 +46,7 @@ exports.sendResponse = async (req, res) => {
 
         // ✅ Send acknowledgment email to the user
         await transPorter.sendMail({
-            from: process.env.SMTP_USER,
+            from: "sales@divypower.com",
             to: email,
             subject: "Thank you for contacting us!",
             text: `Thank you for contacting Divy Power. Our Team will Get back to you soon`,
@@ -102,8 +102,8 @@ exports.CareerApi = async (req, res) => {
 
 
         await transPorter.sendMail({
-            from: process.env.SMTP_USER,
-            to: process.env.SMTP_USER,
+            from: "sales@divypower.com",
+            to: "sales@divypower.com",
             subject: " Career Form Submission",
             text: `FirstName: ${FirstName}\nEmail: ${email}\nPhone No: ${Phone}\nMessage: ${message}\nPosition :${Position}\n CV :${result.secure_url}`,
         });
@@ -111,7 +111,7 @@ exports.CareerApi = async (req, res) => {
 
         // ✅ Send acknowledgment email to the user
         await transPorter.sendMail({
-            from: process.env.SMTP_USER,
+            from: "sales@divypower.com",
             to: email,
             subject: "Thank you for contacting us!",
             text: `Thank you for contacting Divy Power. Our Team will Get back to you soon`,
@@ -157,8 +157,8 @@ exports.contact = async (req, res) => {
         });
 
         await transPorter.sendMail({
-            from: process.env.SMTP_USER,
-            to: process.env.SMTP_USER,
+            from: "sales@divypower.com",
+            to: "sales@divypower.com",
             subject: " Contact Us Form Submission",
             text: `Name: ${name}\nEmail: ${email}\nPhone No: ${phoneNo}\nMessage: ${message}}`,
         });
@@ -166,7 +166,7 @@ exports.contact = async (req, res) => {
 
         // ✅ Send acknowledgment email to the user
         await transPorter.sendMail({
-            from: process.env.SMTP_USER,
+            from: "sales@divypower.com",
             to: email,
             subject: "Thank you for contacting us!",
             text: `Thank you for contacting Divy Power. Our Team will Get back to you soon`,

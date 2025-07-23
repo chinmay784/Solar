@@ -10,7 +10,7 @@ const nodeMailer = require('nodemailer');
 const transPorter = nodeMailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.SMTP_USER,
+    user: "sales@divypower.com",
     pass: process.env.SMTP_PASS
   },
 });
@@ -64,15 +64,15 @@ router.post("/subScribe", async (req, res) => {
 
 
     await transPorter.sendMail({
-      from: process.env.SMTP_USER,
-      to: process.env.SMTP_USER,
+      from: "sales@divypower.com",
+      to: "sales@divypower.com",
       subject: " Newsletter/Blogs Form Submission",
       text: `Email: ${email}`,
     });
 
     // Send mail
     await transPorter.sendMail({
-      from: process.env.SMTP_USER,
+      from: "sales@divypower.com",
       to: email,
       subject: "Thank you for contacting us!",
       text: `Thank you for subscribing to our Newsletter`,
